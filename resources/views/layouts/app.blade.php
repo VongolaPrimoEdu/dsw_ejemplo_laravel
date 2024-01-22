@@ -31,6 +31,7 @@
         <div class="navbar-nav ms-auto">
           <a class="nav-link active" href="{{ route('home.index') }}">Inicio</a>
           <a class="nav-link active" href="{{ route('home.about') }}">Acerca de</a>
+          <a class="nav-link active" href="{{ route('product.productos') }}">Productos</a>
         </div>
       </div>
     </div>
