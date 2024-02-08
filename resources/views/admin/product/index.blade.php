@@ -7,7 +7,7 @@
   </div>
   <div class="card-body">
 
-    <form method="POST" action="{{ route('admin.products.store') }}">
+    <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data">
       @csrf
       <div class="row">
         <div class="col">
@@ -31,6 +31,7 @@
         <label class="form-label">Descripción</label>
         <textarea class="form-control" name="description" rows="3"></textarea>
       </div>
+      <input type="file" name="image">
       <button type="submit" class="btn btn-primary">Enviar</button>
     </form>
   </div>

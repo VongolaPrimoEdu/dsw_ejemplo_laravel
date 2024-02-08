@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Product;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 
 class AdminProductController extends Controller
@@ -38,13 +39,33 @@ class AdminProductController extends Controller
         $product->price = $request->price;
         $product->description = $request->description;
         
-        // Establecer una imagen predeterminada
-$product->image = 'default_image.jpg'; 
-        // Guardar el producto en la base de datos
+      
+         // Obtener el ID del producto recién creado
+    $productId = $product->id;
+
+    // Comprobar si se ha adjuntado un archivo
+    if ($request->hasFile('image')) {
+        // Obtener el nombre original y la extensión del archivo
+        $originalName = $request->file('image')->getClientOriginalName();
+        $extension = $request->file('image')->extension();
+
+        // Definir el nombre del archivo a guardar (concatenando el ID del producto)
+        $fileName = $productId . '_' . $originalName;
+        // Verificar si ya existe un archivo con el mismo nombre
+        if (Storage::disk('public')->exists($fileName)) {
+             // Mostrar un mensaje de error al usuario
+            return redirect()->back()->with('error', 'Ya existe un archivo con este nombre. Por favor, elige otro nombre para tu imagen.');
+        }
+
+        // Mover el archivo a la ubicación definitiva
+        Storage::disk('public')->put($fileName, file_get_contents($request->file('image')));
+
+        // Actualizar el campo de imagen en la base de datos
+        $product->image = $fileName;
         $product->save();
-    
-        // Redireccionar a alguna vista de confirmación o a la lista de productos
-        return redirect()->route('admin.product.index')->with('success', 'Producto creado exitosamente.');
     }
-    
+
+    // Redireccionar a alguna vista de confirmación o a la lista de productos
+    return redirect()->route('admin.product.index')->with('success', 'Producto creado exitosamente.');
+}
 }
