@@ -22,4 +22,5 @@ Route::get('/products/{id}', 'App\Http\Controllers\ProductController@show')->nam
 
 Route::get('/admin', 'App\Http\Controllers\Admin\AdminHomeController@index')->name("admin.home.index");
 Route::get('/admin/products', 'App\Http\Controllers\Admin\AdminProductController@index')->name("admin.product.index");
+Route::post('/admin/products', 'App\Http\Controllers\Admin\AdminProductController@store')->name('admin.products.store');
 
