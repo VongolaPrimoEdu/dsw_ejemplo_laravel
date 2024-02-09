@@ -7,7 +7,7 @@
   </div>
   <div class="card-body">
 
-    <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('admin.product.store') }}" enctype="multipart/form-data">
       @csrf
       <div class="row">
         <div class="col">
@@ -52,12 +52,20 @@
         </tr>
       </thead>
       <tbody>
+      @foreach ($viewData["products"] as $product)
         <tr>
           <td>[ ID ]</td>
           <td>[ NOMBRE ]</td>
-          <td><a href="#">Editar</a></td>
-          <td><a href="#">Eliminar</a></td>
+          <td><a href="{{ route('admin.product.edit', ['id' => $product->id]) }}">Editar</a>
+          <td>
+    <form action="{{ route('admin.product.destroy', ['id' => $product->id]) }}" method="POST">
+        @csrf
+        @method('DELETE')
+        <button type="submit" >Eliminar</button>
+    </form>
+</td>
         </tr>
+        @endforeach
       </tbody>
     </table>
   </div>

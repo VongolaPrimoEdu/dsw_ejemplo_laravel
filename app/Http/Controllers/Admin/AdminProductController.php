@@ -68,4 +68,57 @@ class AdminProductController extends Controller
     // Redireccionar a alguna vista de confirmación o a la lista de productos
     return redirect()->route('admin.product.index')->with('success', 'Producto creado exitosamente.');
 }
+
+
+public function edit($id)
+{
+    $product = Product::findOrFail($id); // Buscamos el producto por su ID
+    return view('admin.product.edit', compact('product')); // Mostramos la vista de edición con los datos del producto
+}
+
+public function update(Request $request, $id)
+{
+    // Validación de los datos recibidos del formulario
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'price' => 'required|numeric|min:0',
+        'description' => 'required|string',
+    ]);
+
+    // Buscamos el producto por su ID
+    $product = Product::findOrFail($id);
+
+    // Actualizamos los atributos del producto con los nuevos valores del formulario
+    $product->name = $request->name;
+    $product->price = $request->price;
+    $product->description = $request->description;
+
+    // Actualizamos la imagen si se proporciona una nueva
+    if ($request->hasFile('image')) {
+        // Eliminamos la imagen anterior si existe
+        Storage::disk('public')->delete($product->image);
+
+         // Movemos el nuevo archivo a la ubicación definitiva
+         $originalName = $request->file('image')->getClientOriginalName();
+         $extension = $request->file('image')->extension();
+         $fileName = $product->id . '_' . $originalName;
+ 
+
+         // Mover el archivo a la ubicación definitiva
+        Storage::disk('public')->put($fileName, file_get_contents($request->file('image')));
+
+        // Actualizar el campo de imagen en la base de datos
+        $product->image = $fileName;
+        $product->save();
+    }
+
+    // Redireccionamos a alguna vista de confirmación o a la lista de productos
+    return redirect()->route('admin.product.index')->with('success', 'Producto actualizado exitosamente.');
+}
+public function destroy($id)
+{
+    Product::destroy($id);
+    return redirect()->route('admin.product.index')->with('success', 'Producto eliminado exitosamente.');
+}
+
 }
